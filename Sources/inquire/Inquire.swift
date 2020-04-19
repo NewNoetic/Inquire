@@ -3,7 +3,7 @@ public struct Inquire {
     var finished: (([String:Any]) -> Void)?
     internal var answers: [String:Any] = [:]
     
-    mutating func run() {
+    func run() {
         prompts.forEach { prompt in
             switch prompt.self {
             case let prompt as Prompt<String>:
