@@ -1,4 +1,4 @@
-protocol Readlineable {
+public protocol Readlineable {
     func readLine() -> String?
 }
 
@@ -42,7 +42,7 @@ public struct Inquire {
     }
 }
 
-protocol Promptable {
+public protocol Promptable {
     var type: PromptType { get set }
     var name: String { get set }
     var message: String { get set }
@@ -59,7 +59,7 @@ public enum PromptType {
 }
 
 public struct Prompt<T>: Promptable {
-    var type: PromptType
+    public var type: PromptType
     public var name: String
     public var message: String
     public var defaultValue: T?
