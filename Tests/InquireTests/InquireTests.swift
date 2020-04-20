@@ -16,15 +16,15 @@ class MockInput: Readlineable {
 final class inquireTests: XCTestCase {
     func testAddPrompt() {
         let testAnswers = [
-            "username": "scrappy",
+            "username": "someone",
             "like_peanuts": false,
-            "top_2_veggies": ["carrot", "avocado"],
-            "italian_dish": "pizza"
+            "italian_dish": "pasta"
             ] as [String : Any]
         
         let testInput = [
-            "scrappy",
-            "n"
+            "someone",
+            "n",
+            "2"
             ] as [Any]
         
         let mockInput = MockInput()
@@ -40,9 +40,9 @@ final class inquireTests: XCTestCase {
             //            Prompt<[String]>(type: .multi, name: "top_2_veggies", message: "What are your top 2 favorite veggies?", defaultValue: ["avocado", "potato", "carrot"]) { response in
             //                XCTAssert(response.answer == testAnswers["top_2_veggies"] as! [String])
             //            },
-            //            Prompt<String>(type: .list, name: "italian_dish", message: "What is your favorite Italian dish?", choices: ["pizza", "pasta", "salad"]) { response in
-            //                XCTAssert(response.answer == testAnswers["italian_dish"] as! String)
-            //            }
+            Prompt<String>(type: .list, name: "italian_dish", message: "What is your favorite Italian dish?", choices: ["pizza", "pasta", "salad"]) { response in
+                XCTAssert(response.answer == testAnswers["italian_dish"] as! String)
+            }
         ]
         
         var inq = Inquire(input: mockInput, prompts: prompts)
@@ -50,6 +50,7 @@ final class inquireTests: XCTestCase {
         print(answers)
         XCTAssert(answers["username"] as! String == testAnswers["username"] as! String)
         XCTAssert(answers["like_peanuts"] as! Bool == testAnswers["like_peanuts"] as! Bool)
+        XCTAssert(answers["italian_dish"] as! String == testAnswers["italian_dish"] as! String)
     }
     
     static var allTests = [

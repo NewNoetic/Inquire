@@ -1,3 +1,5 @@
+import Foundation
+
 public protocol Readlineable {
     func read() -> String?
 }
@@ -19,7 +21,11 @@ public class PromptIterator: IteratorProtocol {
     }
     
     public func append(_ prompt: Promptable) {
-        prompts.append(prompt)
+        self.prompts.append(prompt)
+    }
+    
+    public func append(_ prompts: [Promptable]) {
+        self.prompts.append(contentsOf: prompts)
     }
     
     public typealias Element = Promptable
@@ -37,10 +43,6 @@ public struct Inquire {
         self.prompts = PromptIterator(prompts)
     }
     
-    public func addPrompt(_ prompt: Promptable) {
-        prompts.append(prompt)
-    }
-    
     public func run() -> [String:Any] {
         var answers: [String:Any] = [:]
         
@@ -51,12 +53,30 @@ public struct Inquire {
                 let answer = input.read() ?? ""
                 answers[prompt.name] = answer
             case .confirm:
-                print("* \(prompt.message) (y/n)")
                 var answer: Character = Character(" ")
                 while !(answer == "y" || answer == "n") {
+                    print("* \(prompt.message) (y/n)")
                     answer = input.read()?.first ?? Character(" ")
                 }
                 answers[prompt.name] = answer == "y"
+            case .list:
+                guard let prompt = prompt as? Prompt<String> else {
+                    fatalError()
+                }
+                guard let choices = prompt.choices else {
+                    fatalError("list prompt didn't have choices")
+                }
+                for (index, choice) in choices.enumerated() {
+                    print("\(index+1) \(choice)")
+                }
+                var answer: Int!
+                while (answer == nil || !(1...choices.count).contains(answer)) {
+                    print("* \(prompt.message) (Enter the number for your choice)")
+                    guard let str = input.read() else { continue }
+                    guard let int = Int(str) else { continue }
+                    answer = int
+                }
+                answers[prompt.name] = choices[answer - 1]
             default: ()
             }
             
